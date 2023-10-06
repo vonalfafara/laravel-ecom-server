@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create("orders", function(Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("user_id");
-            $table->foreign("user_id")->references("id")->on("users");
-            $table->unsignedBigInteger("cart_id");
-            $table->foreign("cart_id")->references("id")->on("carts");
+            $table->string("order_id");
+            $table->unsignedBigInteger("user_id")->index();
+            $table->unsignedBigInteger("product_id")->index();
+            $table->integer("quantity");
+            $table->decimal("total");
             $table->enum("status", ["Pending", "For Packaging", "Out for Delivery", "Cancelled"]);
             $table->enum("payment_type", ["Debit/Credit Card", "Cash on Delivery"]);
-            $table->decimal("total");
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        //
     }
 };

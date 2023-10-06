@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cart;
+use App\Models\Product;
 use App\Http\Resources\CartResource;
 
 class CartController extends Controller
@@ -23,11 +24,17 @@ class CartController extends Controller
     {
         $fields = $request->validate([
             "product_id" => "numeric",
-            "user_id" => "numeric",
-            "quantity" => "numeric"
         ]);
 
-        Cart::create($fields);
+        $product = Product::find($fields["product_id"]);
+
+        Cart::create([
+            "product_id" => $product->id,
+            "user_id" => auth()->user()->id,
+            "price" => $product->price,
+            "total_price" => $product->price,
+            "quantity" => 1
+        ]);
 
         return $this->index();
     }
@@ -38,8 +45,10 @@ class CartController extends Controller
     public function incrementQuantity(Request $request, string $id)
     {
         $cart = Cart::find($id);
+        $newQuantity = $cart->quantity + 1;
         $cart->update([
-            "quantity" => ++$cart->quantity
+            "quantity" => $newQuantity,
+            "total_price" => $newQuantity * ((float) $cart->price)
         ]);
 
         return $this->index();
@@ -51,8 +60,15 @@ class CartController extends Controller
     public function decrementQuantity(Request $request, string $id)
     {
         $cart = Cart::find($id);
+        $newQuantity = $cart->quantity - 1;
+
+        if ($newQuantity <= 0) {
+            return $this->destroy($id);
+        }
+        
         $cart->update([
-            "quantity" => --$cart->quantity
+            "quantity" => $newQuantity,
+            "total_price" => $newQuantity * ((float) $cart->price)
         ]);
 
         return $this->index();

@@ -13,7 +13,9 @@ class Cart extends Model
     protected $fillable = [
         "product_id",
         "user_id",
-        "quantity" 
+        "quantity",
+        "price",
+        "total_price"
     ];
 
     public function product(): BelongsTo {

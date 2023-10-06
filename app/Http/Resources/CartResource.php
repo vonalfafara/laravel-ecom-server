@@ -20,7 +20,7 @@ class CartResource extends JsonResource
             "product_name" => $this->product->name,
             "quantity" => $this->quantity,
             "price" => (float) $this->product->price,
-            "total_price" => $this->product->price * $this->quantity
+            "total_price" => (float) $this->total_price
         ];
     }
 }
