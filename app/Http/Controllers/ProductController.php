@@ -19,7 +19,7 @@ class ProductController extends Controller
     }
 
     public function getFilteredProducts(Request $request) {
-        $products = Product::where("name", "like", "%" . $request->query("search") . "%");
+        $products = Product::where("name", "ILIKE", "%" . $request->query("search") . "%");
 
         if ($request->query("category") === "0") {
             $products = $products->whereBetween("price", [$request->query("min-price"), $request->query("max-price")]);
